@@ -1,0 +1,16 @@
+{
+    "patients": {
+        "1": {
+            "name": "John Doe",
+            "age": 30,
+            "gender": "Male",
+            "tests": [
+                {
+                    "name": "Blood Test",
+                    "result": "Normal"
+                }
+            ]
+        }
+    },
+    "next_patient_id": 2
+}
