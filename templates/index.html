@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Insurance Agent{% endblock %}
+
+{% block content %}
+  <h1>Welcome to InsureAI</h1>
+  <p>Your trusted partner in finding the best insurance plans.</p>
+
+  <div id="chat-container">
+    <div id="chat-header">
+      <span>Chat with InsureAI</span>
+    </div>
+    <div id="chat-body">
+      <div id="chat-messages">
+        <div class="bot-message">
+          <div class="message-bubble">Hello! How can I help you today?</div>
+        </div>
+      </div>
+      <div id="chat-input">
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button id="send-btn" class="btn btn-primary">Send</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const chatBody = document.getElementById('chat-body');
+  const chatHeader = document.getElementById('chat-header');
+
+  chatHeader.addEventListener('click', () => {
+    if (chatBody.style.display === 'none' || chatBody.style.display === '') {
+      chatBody.style.display = 'flex';
+    } else {
+      chatBody.style.display = 'none';
+    }
+  });
+
+  const userInput = document.getElementById('user-input');
+  const sendBtn = document.getElementById('send-btn');
+  const messagesContainer = document.getElementById('chat-messages');
+
+  function addMessage(text, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
+
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.classList.add('message-bubble');
+    bubbleDiv.textContent = text;
+
+    messageDiv.appendChild(bubbleDiv);
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = userInput.value.trim();
+    if (message === '') return;
+
+    addMessage(message, 'user');
+    userInput.value = '';
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: message }),
+    });
+
+    const data = await response.json();
+    addMessage(data.response, 'bot');
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
+{% endblock %}
